@@ -29,7 +29,7 @@ midnight-shell 里有**两套互不相通的翻译机制**，本汉化把两套�
 ## 目录结构
 
 ```
-hanhua-bundle/
+midnight-zh-cn/
 ├── MANIFEST.txt         生成信息 + 每个文件的 sha256
 ├── README.md            本文件
 ├── apply.sh             把汉化应用到一份 midnight-shell 源码树
