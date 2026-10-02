@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # midnight-shell 中文本地化包
 
 此项目是 [midnight-shell](https://github.com/dim-ghub/midnight-shell) 的**非官方汉化包**。  
