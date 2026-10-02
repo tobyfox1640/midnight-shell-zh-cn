@@ -19,4 +19,4 @@ index c30a6d92..42682a46 100644
 +# Portable copy of the localisation. Kept out of git on purpose: it carries
 +# prebuilt .so files, and it is meant to live outside the repository so that
 +# `git clean -fdx` cannot delete it.
-+/hanhua-bundle/
++/midnight-zh-cn/

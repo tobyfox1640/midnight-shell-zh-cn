@@ -66,7 +66,7 @@ git clone https://github.com/dim-ghub/midnight-shell.git
 cd midnight-shell
 
 # 2. 应用汉化
-/path/to/hanhua-bundle/apply.sh .        # 参数省略时默认当前目录
+/path/to/midnight-zh-cn/apply.sh .        # 参数省略时默认当前目录
 
 # 3. 构建并安装
 cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -94,14 +94,14 @@ node scripts/hanhua.mjs install
 ## 用法 B：直接装预编译库（最快，不用编译）
 
 ```sh
-/path/to/hanhua-bundle/install-prebuilt.sh
+/path/to/midnight-zh-cn/install-prebuilt.sh
 qs -c caelestia
 ```
 
 回滚：
 
 ```sh
-/path/to/hanhua-bundle/install-prebuilt.sh --restore
+/path/to/midnight-zh-cn/install-prebuilt.sh --restore
 ```
 
 ⚠️ **预编译库只适用于 `278f5ebc` 这个源码版本 + Qt 6.11.2**（见 `MANIFEST.txt`）。
@@ -138,7 +138,7 @@ shell 一旦更新，插件 ABI/资源可能不匹配，此时请改用法 A。
 ```sh
 cd midnight-shell
 git pull                       # 上游更新
-/path/to/hanhua-bundle/apply.sh .   # 重新应用（新文件覆盖 + 补丁尽量打）
+/path/to/midnight-zh-cn/apply.sh .   # 重新应用（新文件覆盖 + 补丁尽量打）
 ```
 
 如果上游改了 `translator.cpp` / `CMakeLists.txt`，对应补丁会显示
