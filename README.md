@@ -145,3 +145,4 @@ git pull                       # 上游更新
 如果上游改了 `translator.cpp` / `CMakeLists.txt`，对应补丁会显示
 `SKIPPED ... (already applied, or the target file differs)` —— 这时需要手动合并。
 改动很小，两个文件的 diff 加起来不到 120 行，可直接看 `patches/` 里的内容照抄。
+# midnight-shell-zh-cn
