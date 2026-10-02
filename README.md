@@ -1,10 +1,8 @@
 # midnight-shell 中文本地化包
 
-这个文件夹是 [midnight-shell](https://github.com/dim-ghub/midnight-shell) 汉化的**完整离线副本**。
-即使仓库被 `git pull` 覆盖、`git clean -fdx` 清空，或者你换了一台机器重新 clone，
-只要有这个文件夹就能把汉化重新装回去。
-
-生成时间与校验和见 `MANIFEST.txt`。
+此项目是 [midnight-shell](https://github.com/dim-ghub/midnight-shell) 的**非官方汉化包**。  
+使用**Deepseek V4.1 Flash**模型进行编写  
+~~ai真的太好用了你们知道吗（逃~~
 
 ---
 
