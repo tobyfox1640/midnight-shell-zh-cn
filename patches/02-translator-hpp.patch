@@ -1,0 +1,33 @@
+diff --git a/plugin/src/Caelestia/I18n/translator.hpp b/plugin/src/Caelestia/I18n/translator.hpp
+index 69980d4a..28d9761f 100644
+--- a/plugin/src/Caelestia/I18n/translator.hpp
++++ b/plugin/src/Caelestia/I18n/translator.hpp
+@@ -2,6 +2,7 @@
+ 
+ #include <qobject.h>
+ #include <qqmlintegration.h>
++#include <qtranslator.h>
+ 
+ #include "pluralrules.hpp"
+ 
+@@ -18,6 +19,7 @@ class Translator : public QObject {
+ 
+ public:
+     explicit Translator(QObject* parent = nullptr);
++    ~Translator() override;
+ 
+     [[nodiscard]] static bool trsChangedFlag();
+ 
+@@ -54,8 +56,12 @@ private:
+     quint32 m_trans = 0;
+     PluralRules m_plurals;
+ 
++    // Serves qsTr() in QML, which the hand-rolled .mo reader below does not cover
++    QTranslator m_qtTranslator;
++
+     [[nodiscard]] static QStringList findSupportedLangs();
+     void loadTranslations();
++    void loadQtTranslations();
+     [[nodiscard]] quint32 readU32(qsizetype offset) const;
+ 
+     [[nodiscard]] static QByteArray catalogKey(const QString& text, const QString& context);

@@ -1,0 +1,51 @@
+midnight-shell Chinese localisation bundle
+generated : 2026-10-02T16:29:27+08:00
+source rev: 278f5ebc6321f8a02df1c0ae213225e68f9e1ca9  (278f5ebc-2026-10-01)
+pkg ver   : midnight-shell-git r3268.278f5eb-1
+Qt        : 6.11.2
+locale    : zh_CN.UTF-8
+shell.json general.language: "zh_CN"
+
+contents:
+
+      2823  ./apply.sh
+     43853  ./catalogues/zh_CN.mo
+     53187  ./catalogues/zh_CN.qm
+     83200  ./files/plugin/src/Caelestia/I18n/trs/zh_CN.po
+    161731  ./files/plugin/src/Caelestia/I18n/trs/zh_CN.ts
+      1385  ./files/scripts/hanhua/extract-qsTr.mjs
+     58204  ./files/scripts/hanhua/i18n/zh_CN.json
+     21426  ./files/scripts/hanhua/lib.mjs
+     21148  ./files/scripts/hanhua.mjs
+      5248  ./files/scripts/hanhua/README.md
+      1665  ./install-prebuilt.sh
+      1825  ./patches/01-i18n-cmakelists.patch
+      1032  ./patches/02-translator-hpp.patch
+      2326  ./patches/03-translator-cpp.patch
+       942  ./patches/04-envrc.patch
+       626  ./patches/05-gitignore.patch
+     18936  ./prebuilt/libcaelestia-i18nplugin.so
+    899200  ./prebuilt/libcaelestia-i18n.so
+      6849  ./README.md
+
+sha256:
+
+1282e27c6348577b50ef91ec7c1ff136123ad5d4fe98966e4595b0289348218b  ./apply.sh
+f3566e2ae456850ff14aec0eec22529e56864722edb3294a70600cc512861cb7  ./catalogues/zh_CN.mo
+86d88658a73f215b85fc8c9148a56878f9d93d0809bf58b5941f77aab3ad4381  ./catalogues/zh_CN.qm
+0f9fe58a587f30b51e67d43c27ad23d68217849418e8f283a0dc20473fd92748  ./files/plugin/src/Caelestia/I18n/trs/zh_CN.po
+5a8f779839cedca8533a32d19d6a2d7b2afc2cf9a3f6ed9d5836ae0394f3c5ec  ./files/plugin/src/Caelestia/I18n/trs/zh_CN.ts
+25dd8488e029f6e4d7e370c6d2d38a4a27d5097c6498a59c3a8a25b34d04e6d6  ./files/scripts/hanhua/extract-qsTr.mjs
+251eebee36b3424bfb7e458ec24efa72313df284fcd76a035402613d20df43ae  ./files/scripts/hanhua/i18n/zh_CN.json
+a880fd69ce8bab5be37a0a3e55dc23b0df6f9b16046bc524d5938619682acee2  ./files/scripts/hanhua/lib.mjs
+9e73e1f0f6987ea07bcb0ddf94772c60e52acbf4bacac7554a4f5138923ed741  ./files/scripts/hanhua.mjs
+ddf72cef0b13a61e99008f43d909e56c36f5fc38cae92efb8f3bc9bd505c672a  ./files/scripts/hanhua/README.md
+5c9fe865f4f684661f50ff77b3efda14c323cd99564e19b0c82fb462347e6e9f  ./install-prebuilt.sh
+143879309e5d06c6dbdb34a2fb3b1019ef610334b00f2bbb8f0ea993e2cae59f  ./patches/01-i18n-cmakelists.patch
+39e01cb44aa773e24ce4fb7d88abe4d1ce3fe0e9f997885d0cbbedae61e28938  ./patches/02-translator-hpp.patch
+d1c200477cf10ffec59e58c554fbf3494ae8d291adc37af4ae5acfccbe362f4b  ./patches/03-translator-cpp.patch
+249c44a00b0396c3c8b87458831107a25b0d37fed1cc2d7ba5bea2f8abc1f2a8  ./patches/04-envrc.patch
+862acbccab0724d1b85790797c20282e1ba081a33019b901e615f7d636d08986  ./patches/05-gitignore.patch
+759508c315f4e6502cf905f890c754c505c74bf4ac1b689a9c386633bf6090b6  ./prebuilt/libcaelestia-i18nplugin.so
+8a98e3e90b3085dc4d7954afe2060afb93b6276a3e7c77154d7063f11638d848  ./prebuilt/libcaelestia-i18n.so
+e793824b9c05a96cdcd975d527928fe1e2f1f068d9694c223b099fae16224834  ./README.md

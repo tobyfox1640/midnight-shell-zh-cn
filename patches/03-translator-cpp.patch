@@ -1,0 +1,63 @@
+diff --git a/plugin/src/Caelestia/I18n/translator.cpp b/plugin/src/Caelestia/I18n/translator.cpp
+index 3f409627..d17abae1 100644
+--- a/plugin/src/Caelestia/I18n/translator.cpp
++++ b/plugin/src/Caelestia/I18n/translator.cpp
+@@ -1,5 +1,6 @@
+ #include "translator.hpp"
+ 
++#include <qcoreapplication.h>
+ #include <qdirlisting.h>
+ #include <qendian.h>
+ #include <qfile.h>
+@@ -73,6 +74,11 @@ Translator::Translator(QObject* parent)
+ 
+     m_language = resolveLanguage(general->language());
+     loadTranslations();
++    loadQtTranslations();
++}
++
++Translator::~Translator() {
++    QCoreApplication::removeTranslator(&m_qtTranslator);
+ }
+ 
+ bool Translator::trsChangedFlag() {
+@@ -203,7 +209,28 @@ void Translator::loadTranslations() {
+     if (!m_plurals.parse(lookupRaw("")))
+         qCDebug(lcI18n) << "No usable Plural-Forms for" << m_language << "- assuming the default rule";
+ 
+-    qCDebug(lcI18n) << "Loaded" << m_count << "messages for" << m_language;
++    qCInfo(lcI18n) << "Loaded" << m_count << "messages for" << m_language;
++}
++
++// qsTr() in QML is resolved by the engine through any QTranslator installed on
++// the application, which the hand-rolled .mo reader above does not feed. The
++// catalog is compiled from the same sources by lrelease into <lang>.qm.
++void Translator::loadQtTranslations() {
++    QCoreApplication::removeTranslator(&m_qtTranslator);
++
++    if (m_language.isEmpty())
++        return;
++
++    const auto path = resourceDir() + m_language + u".qm"_s;
++    if (!m_qtTranslator.load(path)) {
++        qCDebug(lcI18n) << "No Qt catalog for" << m_language;
++        return;
++    }
++
++    if (!QCoreApplication::installTranslator(&m_qtTranslator))
++        qCWarning(lcI18n) << "Failed to install the Qt catalog for" << m_language;
++    else
++        qCInfo(lcI18n) << "Installed the Qt catalog for" << m_language;
+ }
+ 
+ quint32 Translator::readU32(qsizetype offset) const {
+@@ -324,7 +351,8 @@ void Translator::setLanguage(const QString& language) {
+         return;
+ 
+     m_language = language;
+-    loadTranslations(); // Load before emitting cause trsChangedFlag reuses the signal
++    loadTranslations();    // Load before emitting cause trsChangedFlag reuses the signal
++    loadQtTranslations();  // Same: QML re-evaluates its qsTr() bindings on the signal
+     emit languageChanged();
+ }
+ 

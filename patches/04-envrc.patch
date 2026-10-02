@@ -1,0 +1,21 @@
+diff --git a/.envrc b/.envrc
+index 4292c3d0..d982cbfd 100644
+--- a/.envrc
++++ b/.envrc
+@@ -11,8 +11,15 @@ watch_file plugin/**/*.frag
+ watch_file **/CMakeLists.txt
+ watch_file plugin/src/Caelestia/I18n/trs/raw.pot
+ watch_file plugin/src/Caelestia/I18n/trs/*.po
++watch_file plugin/src/Caelestia/I18n/trs/*.ts
+ 
+-cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=clazy -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DDISTRIBUTOR=direnv
++# clazy is only a wrapper; passing it unconditionally breaks the configure step
++# (and leaves the build dir half-written) on machines that don't have it.
++cmake_args=(-B build -G Ninja -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DDISTRIBUTOR=direnv)
++if has clazy; then
++    cmake_args+=(-DCMAKE_CXX_COMPILER=clazy)
++fi
++cmake "${cmake_args[@]}"
+ cmake --build build
+ 
+ export CAELESTIA_LIB_DIR="$PWD/build/lib"
