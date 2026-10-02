@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+state_home="${XDG_STATE_HOME:-$HOME/.local/state}/caelestia-zh-cn"
+shell_dir="${CAELESTIA_CONFIG_DIR:-$config_home/quickshell/caelestia}"
+shell_config="${CAELESTIA_SHELL_CONFIG:-$config_home/caelestia/shell.json}"
+catalog="${CAELESTIA_TRANSLATION_FILE:-$data_home/caelestia-zh-cn/i18n/qml_zh_CN.qm}"
+source_override=""
+restart=true
+check_only=false
+original_args=("$@")
+
+usage() {
+    cat <<'EOF'
+用法：caelestia-zh-apply [选项]
+
+安装或检查 Caelestia 简体中文翻译包，并把界面语言设为简体中文。
+
+选项：
+  --check          仅检查 Shell 翻译框架兼容性
+  --source DIR     检查指定的 Shell 源码或安装目录
+  --refresh        重新安装翻译包（为兼容旧命令保留）
+  --no-restart     应用后不重启 Caelestia
+  -h, --help       显示帮助
+EOF
+}
+
+die_usage() {
+    echo "$1" >&2
+    usage >&2
+    exit 64
+}
+
+while (($#)); do
+    case "$1" in
+        --check) check_only=true ;;
+        --source)
+            (($# >= 2)) || die_usage "--source 需要一个目录参数。"
+            source_override="$2"
+            shift
+            ;;
+        --source=*) source_override="${1#*=}" ;;
+        --refresh) ;;
+        --no-restart) restart=false ;;
+        -h|--help) usage; exit 0 ;;
+        *) die_usage "未知选项：$1" ;;
+    esac
+    shift
+done
+
+check_shell() {
+    local source="${source_override:-$shell_dir}"
+    local plugin_types="${HOME}/.local/lib/qt6/qml/Caelestia/caelestia-core.qmltypes"
+    if [[ ! -f "$source/shell.qml" ]]; then
+        echo "找不到 Caelestia Shell：$source" >&2
+        return 66
+    fi
+    if [[ ! -f "$source/services/UiLanguage.qml" || ! -f "$source/i18n/qml_zh_CN.qm" ]]; then
+        echo "当前 Shell 不支持运行时翻译包，请先更新 Villode Shell。" >&2
+        echo "检查目录：$source" >&2
+        return 65
+    fi
+    if [[ ! -f "$plugin_types" ]] || ! grep -q 'TranslationManager' "$plugin_types" 2>/dev/null; then
+        echo "警告：本地 Caelestia 插件未导出 TranslationManager。" >&2
+        echo "请用 install-villode.sh（不要 --no-native-build）重装 Shell 原生模块。" >&2
+        echo "仅有 .qm 无法翻译；系统 /usr 插件通常过旧。" >&2
+    else
+        echo "原生插件检查通过：TranslationManager 可用。"
+    fi
+    echo "兼容性检查通过：Shell 支持简体中文翻译包。"
+}
+
+if $check_only; then
+    check_shell
+    exit
+fi
+
+command -v python3 >/dev/null 2>&1 || {
+    echo "缺少依赖：python3" >&2
+    exit 69
+}
+command -v flock >/dev/null 2>&1 || {
+    echo "缺少依赖：flock" >&2
+    exit 69
+}
+[[ -f "$catalog" ]] || {
+    echo "找不到简体中文翻译包：$catalog" >&2
+    exit 66
+}
+
+if [[ "${CAELESTIA_ZH_LOCK_HELD:-}" != 1 ]]; then
+    install -d -m700 "$state_home"
+    lock_file="$state_home/operation.lock"
+    : > "$lock_file"
+    chmod 600 "$lock_file"
+    if flock --exclusive --nonblock --close --conflict-exit-code 75 \
+        "$lock_file" env CAELESTIA_ZH_LOCK_HELD=1 "$0" "${original_args[@]}"; then
+        exit 0
+    fi
+    rc=$?
+    [[ "$rc" == 75 ]] && echo "另一个中文安装操作正在进行。" >&2
+    exit "$rc"
+fi
+
+check_shell
+install -Dm644 "$catalog" "$shell_dir/i18n/qml_zh_CN.qm"
+
+python3 - "$shell_config" <<'PY'
+import json
+import os
+import sys
+import tempfile
+
+path = os.path.abspath(os.path.expanduser(sys.argv[1]))
+try:
+    with open(path, encoding="utf-8") as handle:
+        config = json.load(handle)
+except FileNotFoundError:
+    config = {}
+except (json.JSONDecodeError, OSError) as error:
+    raise SystemExit(f"无法读取 Shell 配置 {path}: {error}")
+
+services = config.setdefault("services", {})
+services["uiLanguage"] = "zh_CN"
+os.makedirs(os.path.dirname(path), exist_ok=True)
+fd, temporary = tempfile.mkstemp(prefix=".shell.json.", dir=os.path.dirname(path), text=True)
+try:
+    with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        json.dump(config, handle, ensure_ascii=False, indent=4)
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, path)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+PY
+
+echo "已安装简体中文翻译包，并将 Shell 界面语言设为简体中文。"
+
+if $restart && command -v caelestia >/dev/null 2>&1; then
+    umask 077
+    install -d -m700 "$state_home"
+    log_file="$state_home/restart.log"
+    : > "$log_file"
+    chmod 600 "$log_file"
+    export QML2_IMPORT_PATH="${HOME}/.local/lib/qt6/qml${QML2_IMPORT_PATH:+:$QML2_IMPORT_PATH}"
+    case "${LANG:-}" in ""|C|C.*|POSIX|en|en_*) export LANG=zh_CN.UTF-8 ;; esac
+    case "${LC_ALL:-}" in ""|C|C.*|POSIX|en|en_*) export LC_ALL="$LANG" ;; esac
+    caelestia shell -k >/dev/null 2>&1 || true
+    caelestia shell -d >"$log_file" 2>&1 || {
+        echo "翻译包已安装，但 Caelestia 自动重启失败。" >&2
+        echo "日志：$log_file" >&2
+        exit 70
+    }
+    echo "Caelestia 已重新启动。"
+fi
